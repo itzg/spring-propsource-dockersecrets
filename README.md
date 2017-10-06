@@ -1,0 +1,1 @@
+spring-prop-source-dockersecrets
