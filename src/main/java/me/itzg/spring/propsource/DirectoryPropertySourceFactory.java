@@ -3,7 +3,6 @@ package me.itzg.spring.propsource;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.support.EncodedResource;
 import org.springframework.core.io.support.PropertySourceFactory;
-import org.springframework.lang.Nullable;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -19,7 +18,7 @@ import java.nio.file.Paths;
  */
 public class DirectoryPropertySourceFactory implements PropertySourceFactory {
     @Override
-    public PropertySource<?> createPropertySource(@Nullable String name,
+    public PropertySource<?> createPropertySource(String name,
                                                   EncodedResource encodedResource) throws IOException {
 
         final Path path = Paths.get(encodedResource.getResource().getURI());
