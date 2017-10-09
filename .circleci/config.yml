@@ -55,11 +55,10 @@ workflows:
   build_and_deploy:
     jobs:
       - build
+
       - maven_deploy:
-          requires:
-            - build
           filters:
             tags:
-              only: /\d+\..*/
+              only: /^\d+\..*/
             branches:
               ignore: /.*/
