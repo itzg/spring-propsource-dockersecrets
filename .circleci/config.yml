@@ -36,8 +36,28 @@ jobs:
       - store_test_results:
           path: target/surefire-reports
 
+  maven_deploy:
+    docker:
+      - image: circleci/openjdk:8-jdk
+
+    working_directory: ~/repo
+
+    environment:
+      MAVEN_OPTS: -Xmx3200m
+
+    steps:
+      - checkout
+
+      - run: mvn deploy
+
 workflows:
   version: 2
-  build_and_test:
+  build_and_deploy:
     jobs:
       - build
+      - maven_deploy:
+          requires:
+            - build
+          filters:
+            tags:
+              only: /\d+\..*/
