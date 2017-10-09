@@ -48,7 +48,7 @@ jobs:
     steps:
       - checkout
 
-      - run: mvn deploy
+      - run: mvn -s settings.xml deploy
 
 workflows:
   version: 2
