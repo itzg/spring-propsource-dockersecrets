@@ -62,9 +62,13 @@
                 <version>3.0.0-M1</version>
                 <executions>
                     <execution>
-                        <id>javadoc-jar</id>
+                        <id>attach-javadocs</id>
                         <goals><goal>jar</goal></goals>
                         <configuration>
+                            <!--
+                            This is excluded as a work around for the @PropertySource annotation causing
+                            'javadoc: error - com.sun.tools.javadoc.MethodDocImpl cannot be cast to com.sun.tools.javadoc.AnnotationTypeElementDocImpl'
+                            -->
                             <excludePackageNames>me.itzg.spring.propsource.dockersecrets</excludePackageNames>
                         </configuration>
                     </execution>
@@ -74,6 +78,12 @@
             <plugin>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>3.0.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals><goal>jar</goal></goals>
+                    </execution>
+                </executions>
             </plugin>
 
         </plugins>
