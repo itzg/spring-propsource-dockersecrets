@@ -14,7 +14,7 @@ import org.springframework.context.annotation.PropertySource;
 @Configuration
 @PropertySource(
         name = "docker-secrets",
-        value = "file:///run/secrets",
+        value = "file://${docker.secrets.path:/run/secrets}",
         factory = DirectoryPropertySourceFactory.class)
 public class DockerSecretsPropConfig {
 }

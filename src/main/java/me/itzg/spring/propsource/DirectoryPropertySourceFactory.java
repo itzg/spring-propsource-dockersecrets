@@ -25,6 +25,7 @@ public class DirectoryPropertySourceFactory implements PropertySourceFactory {
 
         final DirectoryPropertySource propertySource = new DirectoryPropertySource(name, path);
         final Charset charset = encodedResource.getCharset();
+        //noinspection ConstantConditions
         if (charset != null) {
             propertySource.setCharset(charset);
         }

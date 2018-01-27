@@ -14,17 +14,31 @@ import java.nio.file.Paths;
  * @since Oct 2017
  */
 public class DirectoryPropertySource extends PropertySource<Path> {
+    private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(DirectoryPropertySource.class);
 
     private Charset charset = StandardCharsets.UTF_8;
 
+    private final boolean sourceReady;
+
+    @SuppressWarnings("WeakerAccess")
     public DirectoryPropertySource(String name, Path source) {
         super(name, source);
 
         if (!Files.isDirectory(source)) {
-            throw new IllegalArgumentException("source needs to be a directory");
+            if (!Files.exists(source)) {
+                LOGGER.warn("Property source directory {} does not exist", source);
+                sourceReady = false;
+            }
+            else {
+                throw new IllegalArgumentException(String.format("Given source=%s, was not a directory", source));
+            }
+        }
+        else {
+            sourceReady = true;
         }
     }
 
+    @SuppressWarnings("unused")
     public DirectoryPropertySource(String name) {
         super(name);
         throw new IllegalStateException("A source path is required");
@@ -40,6 +54,11 @@ public class DirectoryPropertySource extends PropertySource<Path> {
     }
 
     public Object getProperty(String name) {
+        if (!sourceReady) {
+            LOGGER.debug("Skipping lookup of property={} since source directory is not ready", name);
+            return null;
+        }
+
         final Path childPath = Paths.get(name);
         if (childPath.getNameCount() > 1) {
             throw new IllegalArgumentException("name cannot contain path delimiters");
@@ -52,6 +71,14 @@ public class DirectoryPropertySource extends PropertySource<Path> {
         final String[] nameParts = name.split("\\.");
         for (String namePart : nameParts) {
             pathOfProp = pathOfProp.resolve(namePart);
+        }
+
+        if (!Files.exists(pathOfProp)) {
+            pathOfProp = getSource().resolve(name.replace('.', '_'));
+            if (!Files.exists(pathOfProp)) {
+                LOGGER.debug("Unable to resolve property={} to a file within source directory", name);
+                return null;
+            }
         }
 
         try {

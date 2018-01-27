@@ -1,11 +1,11 @@
 package me.itzg.spring.propsource;
 
-import me.itzg.spring.propsource.DirectoryPropertySource;
 import org.junit.Test;
 
 import java.nio.file.Paths;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * @author Geoff Bourne
@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
 public class DirectoryPropertySourceTest {
 
     @Test
-    public void testNormal() throws Exception {
+    public void testNormal() {
         final DirectoryPropertySource propertySource = new DirectoryPropertySource("testing",
                                                                                    Paths.get("src/test/resources/props"));
 
@@ -23,7 +23,7 @@ public class DirectoryPropertySourceTest {
     }
 
     @Test
-    public void testMissingProp() throws Exception {
+    public void testMissingProp() {
         final DirectoryPropertySource propertySource = new DirectoryPropertySource("testing",
                                                                                    Paths.get("src/test/resources/props"));
 
@@ -32,39 +32,55 @@ public class DirectoryPropertySourceTest {
 
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testMissingSourceDir() throws Exception {
-        new DirectoryPropertySource("testing",
-                                    Paths.get("src/test/resources/nothere"));
+    @Test
+    public void testMissingSourceDir() {
+        final DirectoryPropertySource source =
+                new DirectoryPropertySource("testing",
+                                            Paths.get("src/test/resources/nothere"));
+
+        final Object value = source.getProperty("blah");
+        assertNull(value);
 
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testWrongTypeOfSource() throws Exception {
+    public void testWrongTypeOfSource() {
         new DirectoryPropertySource("testing",
                                     Paths.get("src/test/resources/props/greeting"));
 
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testImproperPropName() throws Exception {
-        final DirectoryPropertySource propertySource = new DirectoryPropertySource("testing",
-                                                                                   Paths.get("src/test/resources/props"));
+    public void testImproperPropName() {
+        final DirectoryPropertySource propertySource =
+                new DirectoryPropertySource("testing",
+                                            Paths.get("src/test/resources/props"));
 
         propertySource.getProperty("/etc/passwod");
     }
 
     @Test
-    public void testDottedName() throws Exception {
-        final DirectoryPropertySource propertySource = new DirectoryPropertySource("testing",
-                                                                                   Paths.get("src/test/resources/props"));
+    public void testDottedName() {
+        final DirectoryPropertySource propertySource =
+                new DirectoryPropertySource("testing",
+                                            Paths.get("src/test/resources/props"));
 
         final Object value = propertySource.getProperty("grouped.prize");
         assertEquals("nothing", value);
     }
 
     @Test
-    public void testTrimsWhitespace() throws Exception {
+    public void testDottedNameNonDirectory() {
+        final DirectoryPropertySource propertySource =
+                new DirectoryPropertySource("testing",
+                                            Paths.get("src/test/resources/props"));
+
+        final Object value = propertySource.getProperty("top.middle.prop");
+        assertEquals("success", value);
+    }
+
+    @Test
+    public void testTrimsWhitespace() {
         final DirectoryPropertySource propertySource = new DirectoryPropertySource("testing",
                                                                                    Paths.get("src/test/resources/props"));
 
