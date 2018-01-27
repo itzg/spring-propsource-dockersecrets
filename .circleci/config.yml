@@ -2,17 +2,22 @@
 #
 # Check https://circleci.com/docs/2.0/language-java/ for more details
 #
+
+defaults: &defaults
+  docker:
+    - image: circleci/openjdk:8-jdk
+
+  working_directory: ~/repo
+
+  environment:
+    MAVEN_OPTS: -Xmx3200m
+
+
 version: 2
 jobs:
+
   build:
-    docker:
-      - image: circleci/openjdk:8-jdk
-
-    working_directory: ~/repo
-
-    environment:
-      MAVEN_OPTS: -Xmx3200m
-
+    <<: *defaults
     steps:
       - checkout
 
@@ -37,18 +42,36 @@ jobs:
           path: target/surefire-reports
 
   maven_deploy:
-    docker:
-      - image: circleci/openjdk:8-jdk
-
-    working_directory: ~/repo
-
-    environment:
-      MAVEN_OPTS: -Xmx3200m
-
+    <<: *defaults
     steps:
       - checkout
 
       - run: mvn -s settings.xml deploy
+
+  release:
+    <<: *defaults
+    steps:
+      - checkout
+
+      - run:
+          name: Checking if this is a release build
+          command: |
+            if [[ $RELEASE && $NEXT ]]; then
+              if [[ $GIT_USER_EMAIL ]]; then git config --global user.email "$GIT_USER_EMAIL" ; fi
+              if [[ $GIT_USER_NAME ]]; then git config --global user.name "$GIT_USER_NAME" ; fi
+              mvn -B release:prepare -DreleaseVersion=$RELEASE -DdevelopmentVersion=$NEXT
+            else
+              echo "Release skipped. Use this to perform a release:
+              curl -X POST -H \"Content-Type: application/json\" -d '{
+                  \"build_parameters\": {
+                      \"CIRCLE_JOB\": \"release\",
+                      \"RELEASE\": \"1.1.1\",
+                      \"NEXT\": \"1.2-SNAPSHOT\",
+                  }
+              }' \"https://circleci.com/api/v1.1/project/github/ORG/PROJECT/tree/master?circle-token=TOKEN\"
+              "
+            fi
+
 
 workflows:
   version: 2
