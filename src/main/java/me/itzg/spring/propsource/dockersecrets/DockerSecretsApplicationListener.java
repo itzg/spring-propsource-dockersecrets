@@ -1,7 +1,9 @@
 package me.itzg.spring.propsource.dockersecrets;
 
 import me.itzg.spring.propsource.DirectoryPropertySource;
+import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEvent;
 import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 
@@ -16,11 +18,12 @@ import java.nio.file.Paths;
  * @since Jan 2018
  */
 @SuppressWarnings("unused")
-public class DockerSecretsContextInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+public class DockerSecretsApplicationListener implements ApplicationListener<ApplicationEnvironmentPreparedEvent> {
 
     @Override
-    public void initialize(ConfigurableApplicationContext context) {
-        final ConfigurableEnvironment env = context.getEnvironment();
+    public void onApplicationEvent(ApplicationEnvironmentPreparedEvent event) {
+        final ConfigurableEnvironment env = event.getEnvironment();
+
         final Path dockerSecretsPath = Paths.get(env.getProperty("docker.secrets.path", "/run/secrets"));
         env.getPropertySources().addLast(
                 new DirectoryPropertySource("dockerSecrets",
