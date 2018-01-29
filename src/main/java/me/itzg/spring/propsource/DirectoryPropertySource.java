@@ -52,16 +52,18 @@ public class DirectoryPropertySource extends PropertySource<Path> {
 
     public Object getProperty(String name) {
         if (!sourceReady) {
-            LOGGER.debug("Skipping lookup of property={} since source directory is not ready", name);
+            LOGGER.trace("Skipping lookup of property={} since source directory is not ready", name);
             return null;
         }
 
         final Path childPath = Paths.get(name);
         if (childPath.getNameCount() > 1) {
-            throw new IllegalArgumentException("name cannot contain path delimiters");
+            LOGGER.trace("name cannot contain path delimiters: {}", name);
+            return null;
         }
         if (childPath.isAbsolute()) {
-            throw new IllegalArgumentException("name cannot be absolute");
+            LOGGER.trace("name cannot be absolute: {}", name);
+            return null;
         }
 
         Path pathOfProp = getSource();
@@ -70,7 +72,7 @@ public class DirectoryPropertySource extends PropertySource<Path> {
             pathOfProp = pathOfProp.resolve(namePart);
 
             if (!Files.exists(pathOfProp)) {
-                LOGGER.debug("Unable to resolve property={} to a file within source directory", name);
+                LOGGER.trace("Unable to resolve property={} to a file within source directory", name);
                 return null;
             }
         }

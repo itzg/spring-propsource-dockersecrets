@@ -50,13 +50,14 @@ public class DirectoryPropertySourceTest {
 
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testImproperPropName() {
         final DirectoryPropertySource propertySource =
                 new DirectoryPropertySource("testing",
                                             Paths.get("src/test/resources/props"));
 
-        propertySource.getProperty("/etc/passwod");
+        final Object value = propertySource.getProperty("/etc/password");
+        assertNull("Should have disallowed absolute paths", value);
     }
 
     @Test
