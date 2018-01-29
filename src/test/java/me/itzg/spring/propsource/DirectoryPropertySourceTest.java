@@ -70,16 +70,6 @@ public class DirectoryPropertySourceTest {
     }
 
     @Test
-    public void testDottedNameNonDirectory() {
-        final DirectoryPropertySource propertySource =
-                new DirectoryPropertySource("testing",
-                                            Paths.get("src/test/resources/props"));
-
-        final Object value = propertySource.getProperty("top.middle.prop");
-        assertEquals("success", value);
-    }
-
-    @Test
     public void testTrimsWhitespace() {
         final DirectoryPropertySource propertySource = new DirectoryPropertySource("testing",
                                                                                    Paths.get("src/test/resources/props"));

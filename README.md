@@ -8,9 +8,7 @@ Add the following to your `pom.xml`'s dependencies:
 <dependency>
   <groupId>me.itzg</groupId>
   <artifactId>spring-propsource-dockersecrets</artifactId>
-  <version>1.1.0</version>
+  <version>1.2.0</version>
 </dependency>
 ```
-
-Add the `@EnableDockerSecretsPropertySource` to one of your `@Configuration` beans.
 

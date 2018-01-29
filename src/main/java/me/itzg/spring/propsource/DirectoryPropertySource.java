@@ -15,10 +15,8 @@ import java.nio.file.Paths;
  */
 public class DirectoryPropertySource extends PropertySource<Path> {
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(DirectoryPropertySource.class);
-
-    private Charset charset = StandardCharsets.UTF_8;
-
     private final boolean sourceReady;
+    private Charset charset = StandardCharsets.UTF_8;
 
     @SuppressWarnings("WeakerAccess")
     public DirectoryPropertySource(String name, Path source) {
@@ -28,12 +26,10 @@ public class DirectoryPropertySource extends PropertySource<Path> {
             if (!Files.exists(source)) {
                 LOGGER.warn("Property source directory {} does not exist", source);
                 sourceReady = false;
-            }
-            else {
+            } else {
                 throw new IllegalArgumentException(String.format("Given source=%s, was not a directory", source));
             }
-        }
-        else {
+        } else {
             sourceReady = true;
         }
     }
@@ -47,6 +43,7 @@ public class DirectoryPropertySource extends PropertySource<Path> {
     /**
      * Set the character set used for reading the property-content file.
      * Default is {@link StandardCharsets#UTF_8}
+     *
      * @param charset the character set to use
      */
     public void setCharset(Charset charset) {
@@ -71,10 +68,7 @@ public class DirectoryPropertySource extends PropertySource<Path> {
         final String[] nameParts = name.split("\\.");
         for (String namePart : nameParts) {
             pathOfProp = pathOfProp.resolve(namePart);
-        }
 
-        if (!Files.exists(pathOfProp)) {
-            pathOfProp = getSource().resolve(name.replace('.', '_'));
             if (!Files.exists(pathOfProp)) {
                 LOGGER.debug("Unable to resolve property={} to a file within source directory", name);
                 return null;
