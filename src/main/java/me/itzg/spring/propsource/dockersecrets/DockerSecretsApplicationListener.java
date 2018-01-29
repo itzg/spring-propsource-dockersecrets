@@ -2,9 +2,9 @@ package me.itzg.spring.propsource.dockersecrets;
 
 import me.itzg.spring.propsource.DirectoryPropertySource;
 import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEvent;
-import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.boot.logging.LoggingApplicationListener;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.Ordered;
 import org.springframework.core.env.ConfigurableEnvironment;
 
 import java.nio.file.Path;
@@ -18,7 +18,11 @@ import java.nio.file.Paths;
  * @since Jan 2018
  */
 @SuppressWarnings("unused")
-public class DockerSecretsApplicationListener implements ApplicationListener<ApplicationEnvironmentPreparedEvent> {
+public class DockerSecretsApplicationListener implements ApplicationListener<ApplicationEnvironmentPreparedEvent>, Ordered {
+
+    public static final int DEFAULT_ORDER = LoggingApplicationListener.DEFAULT_ORDER-1;
+
+    private int order = DEFAULT_ORDER;
 
     @Override
     public void onApplicationEvent(ApplicationEnvironmentPreparedEvent event) {
@@ -30,5 +34,14 @@ public class DockerSecretsApplicationListener implements ApplicationListener<App
                                             dockerSecretsPath)
         );
 
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
+    }
+
+    @Override
+    public int getOrder() {
+        return order;
     }
 }
